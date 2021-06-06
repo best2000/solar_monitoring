@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" id="whole">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SolarPowerSystemMonitoring</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"
+        integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+
+        
+
+    <section class="hero has-text-centered">
+        <div class="hero-body">
+            <p class="title is-2">
+                SolarPowerSystem Dashboard 
+            </p>
+            <p class="subtitle">
+                <strong>Everything</strong> By <strong><a href="https://github.com/best2000">best2000</a></strong>, also
+                known as <strong><a href="https://steamcommunity.com/id/silentman1605">SILENTMΔN</a></strong>.
+            </p>
+        </div>
+    </section>
+    
+
+    <div class="level">
+        <h2 class="subtitle level-item has-text-centered">
+            <strong>Welcome</strong>&nbsp;to the <button id="light" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item" onclick="dark_mode()"><b>LIGHT</b></button>
+                                                <button id="dark" style="display: none;" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item" onclick="light_mode()"><b>DARK</b></button> side.</h2>
+    </div>
+
+    <section class="section">
+        <h1 class="title is-3">Live Stats</h1>
+        <h2 class="subtitle"><strong id='s1t1'>????</strong></h2>
+        
+        <div class="columns">
+            <div class="column is-one-fifth">
+                <table class="table is-hoverable">
+                    <tr><td><b>PV Voltage</b></td><td id="v_pv">??</td></tr>
+                    <tr><td><b>PV Current</b></td><td id="i_pv">??</td></tr>
+                    <tr><td><b>PV Power</b></td><td id="p_pv">??</td></tr>
+                    <tr><td><b>Battery Voltage</b></td><td id="v_bat">??</td></tr>
+                    <tr><td><b>Load Current</b></td><td id="i_load">??</td></tr>
+                    <tr><td><b>Load Power</b></td><td id="p_load">??</td></tr>
+                </table>
+                <div class="block">
+                    All the data is based on my <a href="/info">SolarPowerSystem</a>.
+                </div>
+            </div>
+            <div class="column">
+                <div><canvas id="livePlot"></canvas></div>
+            </div>
+            <div class="column">
+                <div><canvas id="livePlot2"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <h1 class="title us-3">Log Stats</h1>
+        <h2 class="subtitle"><strong>Filter</strong> by time ranges from past to present.</h2>
+        <button id="btn1" class="button" onclick="update_logs(60)">1 Hours</button>
+        <button id="btn2" class="button" onclick="update_logs(360)">6 Hours</button>
+        <button id="btn3" class="button" onclick="update_logs(720)">12 Hours</button>
+        <button id="btn4" class="button" onclick="update_logs(1440)">24 Hours</button>
+        <button id="btn5" class="button" onclick="update_logs(10080)">7 days</button>
+        <button id="btn6" class="button" onclick="update_logs(43200)">30 days</button>
+        <button id="btn7" class="button" onclick="update_logs(129600)">3 months</button>
+        <button id="btn8" class="button" onclick="update_logs(259200)">6 months</button>
+        <button id="btn9" class="button" onclick="update_logs(518400)">12 months</button>
+        <div class="block"></div>
+        <div class="columns">
+            <div class="column">
+                <canvas id="logPlot"></canvas>
+            </div>
+            <div class="column">
+                <canvas id="logPlot2"></canvas>
+            </div>
+        </div>
+            
+        
+        
+    </section>
+
+
+    
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Everything</strong> by <a href="https://github.com/best2000">best2000</a>, also known as <a
+                    href="https://steamcommunity.com/id/silentman1605">SILENTMΔN</a>.
+            </p>
+        </div>
+        <div class="content has-text-centered">
+            <p>
+                <strong>Powered</strong> by <a href="https://flask.palletsprojects.com/en/2.0.x/">Flask</a>, <a
+                    href="https://bulma.io/">Bulma</a> and <a href="https://www.chartjs.org/docs/latest/">Chart.js</a>.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        var time = ""
+        var date = ""
+        var stats = Object
+        var logs = Object
+        var l = 1440
+
+        function dark_mode() {
+            document.getElementById("whole").style.filter = "none"
+            document.getElementById("whole").style.filter = "invert(1)"
+            document.getElementById("light").style.display = 'none'
+            document.getElementById("dark").style.display = 'block'
+            
+        }
+        function light_mode() {
+            document.getElementById("whole").style.filter = "none"
+            document.getElementById("light").style.display = 'block'
+            document.getElementById("dark").style.display = 'none'
+            
+        }
+
+        function addLabel(chart, label) {
+            chart.data.labels.push(label)
+            chart.update()
+        }
+
+        function addData(chart, dataset, data) {
+            chart.data.datasets[dataset].data.push(data)
+            chart.update()
+        }
+
+        function update_stats() {
+            $.ajax({
+                url: "/stats",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    stats = data
+                    date = stats.date
+                    time = stats.time
+                    document.getElementById('s1t1').innerHTML = '@' +date+' '+time
+                    document.getElementById('v_pv').innerHTML = stats['v_pv'] + " V"
+                    document.getElementById('i_pv').innerHTML = stats['i_pv'] + " A"
+                    document.getElementById('v_bat').innerHTML = stats['v_bat'] + " V"
+                    document.getElementById('i_load').innerHTML = stats['i_load'] + " A"
+
+                    var p_pv = (Math.floor(parseFloat(stats['v_pv'])*parseFloat(stats['i_pv']))).toString()
+                    document.getElementById('p_pv').innerHTML = p_pv + " W"
+                    var p_load = (Math.floor(parseFloat(stats['v_bat'])*parseFloat(stats['i_load']))).toString()
+                    document.getElementById('p_load').innerHTML = p_load + " W"
+
+                    addLabel(livePlot, time.slice(3, 8))
+                    addData(livePlot, 0, parseFloat(stats['v_pv']))
+                    addData(livePlot, 1, parseFloat(stats['i_pv']))
+                    addData(livePlot, 2, parseFloat(stats['v_bat']))
+                    addData(livePlot, 3, parseFloat(stats['i_load']))
+
+                    addLabel(livePlot2, time.slice(3, 8))
+                    addData(livePlot2, 0, parseFloat(p_pv))
+                    addData(livePlot2, 1, parseFloat(p_load))
+
+                    if (livePlot.data.labels.length > 60) {
+                        livePlot.data.labels.shift()
+                        livePlot.data.datasets[0].data.shift()
+                        livePlot.data.datasets[1].data.shift()
+                        livePlot.data.datasets[2].data.shift()
+                        livePlot.data.datasets[3].data.shift()
+                        livePlot.update()
+
+                        livePlot2.data.labels.shift()
+                        livePlot2.data.datasets[0].data.shift()
+                        livePlot2.data.datasets[1].data.shift()
+                        livePlot2.update()
+                    }
+                }
+            })
+        }
+
+        $(function () {
+            window.setInterval(function () {
+                update_stats()
+            }, 1000)
+        })
+        $(function () {
+            window.setInterval(function () {
+                update_logs(l)
+            }, 60000)
+        })
+
+        $(function () {
+            window.setInterval(function () {
+                if (l == 60) {
+                    document.getElementById("btn1").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn1").classList.remove('is-focused');
+                }
+                if (l == 360) {
+                    document.getElementById("btn2").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn2").classList.remove('is-focused');
+                }
+                if (l == 720) {
+                    document.getElementById("btn3").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn3").classList.remove('is-focused');
+                }
+                if (l == 1440) {
+                    document.getElementById("btn4").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn4").classList.remove('is-focused');
+                }
+                if (l == 10080) {
+                    document.getElementById("btn5").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn5").classList.remove('is-focused');
+                }
+                if (l == 43200) {
+                    document.getElementById("btn6").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn6").classList.remove('is-focused');
+                }
+                if (l == 43200*3) {
+                    document.getElementById("btn7").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn7").classList.remove('is-focused');
+                }
+                if (l == 43200*6) {
+                    document.getElementById("btn8").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn8").classList.remove('is-focused');
+                }
+                if (l == 43200*12) {
+                    document.getElementById("btn9").classList.add('is-focused');
+                } else{
+                    document.getElementById("btn9").classList.remove('is-focused');
+                }
+            }, 100)
+        })
+
+        $(document).ready(function(){
+            document.getElementById("livePlot").style.width = parseInt(document.getElementById("livePlot").style.width).toString() + "px"
+            document.getElementById("livePlot2").style.width = parseInt(document.getElementById("livePlot2").style.width).toString() + "px"
+            document.getElementById("logPlot").style.width = parseInt(document.getElementById("logPlot").style.width).toString() + "px"
+            document.getElementById("logPlot2").style.width = parseInt(document.getElementById("logPlot2").style.width).toString() + "px"
+        })
+
+        function update_logs(lines) {
+            l = lines
+            $.ajax({
+                url: "/logs?l=" + lines,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    logs = data
+
+                    logPlot.data.labels = logs.date_time
+                    logPlot.data.datasets[0].data = logs.v_pv
+                    logPlot.data.datasets[1].data = logs.i_pv
+                    logPlot.data.datasets[2].data = logs.v_bat
+                    logPlot.data.datasets[3].data = logs.i_load
+                    logPlot.update();
+
+                    logPlot2.data.labels = logs.date_time
+                    logPlot2.data.datasets[0].data = logs.p_pv
+                    logPlot2.data.datasets[1].data = logs.p_load
+                    logPlot2.update();
+                }
+            })
+        }
+
+        update_logs(l)
+        update_stats()
+        //Chart.defaults.datasets.line.showLine = false
+        Chart.defaults.elements.point.pointBorderWidth = 0
+        Chart.defaults.elements.point.radius = 0
+        Chart.defaults.elements.point.hitRadius = 6
+        Chart.defaults.elements.point.hoverRadius = 5
+        Chart.defaults.elements.pointhoverBorderWidth = 1.25
+        Chart.defaults.elements.line.borderWidth = 1.5
+
+
+
+        var ctx = document.getElementById("livePlot").getContext("2d")
+        var livePlot = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'PV Voltage (V)',
+                    data: [],
+                    backgroundColor: 'rgba(255, 160, 60, 1)',
+                    borderColor: 'rgba(255, 160, 60, 1)',
+                    fill: false,
+                    tension: 0,
+                },
+                {
+                    label: 'PV Current (A)',
+                    data: [],
+                    backgroundColor: 'rgba(27, 127, 204, 1)',
+                    borderColor: 'rgba(27, 127, 204, 1)',
+                    fill: false,
+                    tension: 0,
+                },
+                {
+                    label: 'Battery Voltage (V)',
+                    data: [],
+                    backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    fill: true,
+                    tension: 0,
+                },
+                {
+                    label: 'Load Current (A)',
+                    data: [],
+                    backgroundColor: 'rgba(40, 167, 69, 1)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    fill: false,
+                    tension: 0,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: 'auto'
+                    },
+                    y: {
+                        suggestedMin: 0,
+                        suggestedMax: 27
+                    }
+                },
+                responsive: true
+            }
+        });
+        var ctx2 = document.getElementById("livePlot2").getContext("2d")
+        var livePlot2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'PV Power (W)',
+                    data: [],
+                    backgroundColor: 'rgba(161, 85, 172, 1)',
+                    borderColor: 'rgba(161, 85, 172, 1)',
+                    fill: false,
+                    tension: 0,
+                },
+                {
+                    label: 'Load Power (W)',
+                    data: [],
+                    backgroundColor: 'rgba(32, 201, 151, 1)',
+                    borderColor: 'rgba(32, 201, 151, 1)',
+                    fill: false,
+                    tension: 0,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: 'auto'
+                    },
+                    y: {
+                        suggestedMin: 0,
+                        suggestedMax: 1000
+                    }
+                },
+                responsive: true
+            }
+        });
+        var ctx3 = document.getElementById("logPlot").getContext("2d")
+        var logPlot = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'PV Voltage (V)',
+                    data: [],
+                    backgroundColor: 'rgba(255, 160, 60, 1)',
+                    borderColor: 'rgba(255, 160, 60, 1)',
+                    fill: false,
+                    tension: 0,
+                },
+                {
+                    label: 'PV Current (A)',
+                    data: [],
+                    backgroundColor: 'rgba(27, 127, 204, 1)',
+                    borderColor: 'rgba(27, 127, 204, 1)',
+                    fill: false,
+                    tension: 0,
+                },
+                {
+                    label: 'Battery Voltage (V)',
+                    data: [],
+                    backgroundColor: 'rgba(220, 53, 69, 0.05)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    fill: true,
+                    tension: 0,
+                },
+                {
+                    label: 'Load Current (A)',
+                    data: [],
+                    backgroundColor: 'rgba(40, 167, 69, 1)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    fill: false,
+                    tension: 0,
+                }],
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: 'auto',
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 90
+                        }
+                    },
+                    y: {
+                        suggestedMin: 20,
+                        suggestedMax: 28,
+                    },
+                },
+                responsive: true
+            }
+        });
+        var ctx4 = document.getElementById("logPlot2").getContext("2d")
+        var logPlot2 = new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'PV Power (W)',
+                    data: [],
+                    backgroundColor: 'rgba(161, 85, 172, 1)',
+                    borderColor: 'rgba(161, 85, 172, 1)',
+                    fill: false,
+                    tension: 0
+                },
+                {
+                    label: 'Load Power (W)',
+                    data: [],
+                    backgroundColor: 'rgba(32, 201, 151, 1)',
+                    borderColor: 'rgba(32, 201, 151, 1)',
+                    fill: false,
+                    tension: 0
+                }],
+            },
+            options: {
+                scales: {
+                    x: {
+                        display: 'auto',
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 90
+                        }
+                    },
+                    y: {
+                        suggestedMin: 20,
+                        suggestedMax: 28,
+                    },
+                },
+                responsive: true
+            }
+        });
+    </script>
+</body>
+
+</html>
