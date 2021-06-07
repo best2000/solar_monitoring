@@ -1,7 +1,5 @@
 #include <WiFi.h>
 #include <Wire.h>
-#include <WiFiUdp.h>
-#include <WakeOnLan.h>
 
 #define LED_BUILTIN 2
 
@@ -14,11 +12,6 @@ int reg_vbus = 0x02;
 
 const char* ssid = "office_2.4G";
 const char* password = "123123123b";
-
-const char *MACAddress = "2C:F0:5D:5A:34:AC";
-int wake = 0;
-WiFiUDP UDP;
-WakeOnLan WOL(UDP);
 
 WiFiServer server(80);
 unsigned long currentTime;
@@ -41,22 +34,9 @@ void setup() {
   WiFi.persistent(true);
   server.begin();
   
-  WOL.setRepeat(3, 100);
-  WOL.calculateBroadcastAddress(WiFi.localIP(), WiFi.subnetMask());
-  
   led_boot();
 }
 void loop() {
-  float v_bat = readv_ina226();
-  if (wake == 0 && v_bat >= 27.0 && v_bat <= 36.0) {
-    digitalWrite(LED_BUILTIN, HIGH);
-    WOL.sendMagicPacket(MACAddress);
-    digitalWrite(LED_BUILTIN, LOW);
-    wake = 1;
-  } else if (wake == 1 && v_bat <= 24.0) {
-    wake = 0;
-  }
-  
   WiFiClient client = server.available();
   if (client) {
     digitalWrite(LED_BUILTIN, HIGH);

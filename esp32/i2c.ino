@@ -59,7 +59,6 @@ float readv_ina219_1() {
 }
 
 float v_raw;
-float i_raw;
 //i_pv
 float readv_ina219_2() {
   Wire.beginTransmission(ina219_2);
@@ -71,9 +70,10 @@ float readv_ina219_2() {
   
   int bits = ((msb << 5) | (lsb >> 3));
   float v = bits*0.004;
+  v_raw = v;
   v -= 2.275;
   float i = abs(v/0.066);
-  if (i < 1.0) {
+  if (i < 0.75) {
     return 0;   
   } else {
     return abs(i); 
@@ -93,14 +93,13 @@ float readv_ina219_3() {
   float v = bits*0.004;
   v -= 2.275;
   float i = abs(v/0.04);      
-  if (i < 1.0 || i >= 125.0) {
+  if (i < 1 || i >= 125.0) {
     return 0;   
   } else {
     return abs(i); 
   }
 }
-  
 
 String readv_JSON() {
-  return "{\"v_pv\":" + String(readv_ina219_1(), 2) + ",\"i_pv\":"+ String(readv_ina219_2(), 2) + ",\"v_bat\":" + String(readv_ina226(), 2) + ",\"i_load\":"+ String(readv_ina219_3(), 2) + "}";
+  return "{\"v_pv\":" + String(readv_ina219_1(), 2) + ",\"i_pv\":"+ String(readv_ina219_2(), 2) + ",\"v_bat\":" + String(readv_ina226(), 2) + ",\"i_load\":"+ String(readv_ina219_3(), 2) + ",\"i_pv_vraw\":"+ String(v_raw, 2)+"}";
 }

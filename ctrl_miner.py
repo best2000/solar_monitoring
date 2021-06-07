@@ -1,6 +1,7 @@
 #miners addr
 #192.168.1.158 = vega56 = 2C:F0:5D:5A:34:AC
-import time, socket, logging, subprocess
+import time, socket, logging
+from wakeonlan import send_magic_packet
 
 mac = "2C:F0:5D:5A:34:AC"
 
@@ -21,9 +22,6 @@ def message(addr, mess):
 	except:
 		return None
 
-def wake(mac):
-	subprocess.Popen("sudo etherwake -i wlan0 "+mac, shell=True)
-
 try:
 	miner_stat = message('192.168.1.158', 'ping')
 	if miner_stat == 'pong':
@@ -43,6 +41,7 @@ while True:
 			logging.info("192.168.1.158 => sleep")
 		elif v_bat >= 27:
 			#wake("2C:F0:5D:5A:34:AC")
+			send_magic_packet(mac)
 			miner_stat = "pong"
 			logging.info("192.168.1.158 => wake")
 		time.sleep(1)
