@@ -8,6 +8,7 @@ def write_stat(data, file):
 	f.write(str(data))
 	f.close()
 
+start = time.time()
 while True:
 	try:
 		r = requests.get('http://192.168.1.162')
@@ -22,8 +23,10 @@ while True:
 		write_stat(i_pv, 'i_pv')
 		write_stat(v_bat, 'v_bat')
 		write_stat(i_load, 'i_load')
-		logging.info(format(v_pv, '.2f')+" | "+format(i_pv, '.2f')+" | "+str(p_pv)+" | "+format(v_bat, '.2f')+" | "+format(i_load, '.2f')+" | "+str(p_out))
-		time.sleep(60)
+		if time.time()-start >= 60:
+			logging.info(format(v_pv, '.2f')+" | "+format(i_pv, '.2f')+" | "+str(p_pv)+" | "+format(v_bat, '.2f')+" | "+format(i_load, '.2f')+" | "+str(p_out))
+			start = time.time()
+		time.sleep(1)
 	except:
 		unixTime = time.time()
 		print(str(unixTime)+" error! just try again.")
