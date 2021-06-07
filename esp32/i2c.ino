@@ -58,6 +58,8 @@ float readv_ina219_1() {
   
 }
 
+float v_raw;
+float i_raw;
 //i_pv
 float readv_ina219_2() {
   Wire.beginTransmission(ina219_2);
@@ -70,8 +72,8 @@ float readv_ina219_2() {
   int bits = ((msb << 5) | (lsb >> 3));
   float v = bits*0.004;
   v -= 2.275;
-  float i = v/0.066;   
-  if (i <= 1.0) {
+  float i = abs(v/0.066);
+  if (i < 1.0) {
     return 0;   
   } else {
     return abs(i); 
@@ -90,8 +92,8 @@ float readv_ina219_3() {
   int bits = ((msb << 5) | (lsb >> 3));
   float v = bits*0.004;
   v -= 2.275;
-  float i = v/0.04;      
-  if (i <= 1.0 || i >= 125.0) {
+  float i = abs(v/0.04);      
+  if (i < 1.0 || i >= 125.0) {
     return 0;   
   } else {
     return abs(i); 

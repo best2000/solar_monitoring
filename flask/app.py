@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request, url_for
 from datetime import datetime
+import os
 
 def read_stat(s):
     #f = open("/home/pi/solar_automa/stats/"+s, "r")
@@ -80,7 +81,9 @@ def read_log(l):
         'i_load':y_i_load,
         'p_load':y_p_load }
 
+pics = os.path.join('static', 'pics')
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = pics
 
 @app.route('/')
 def index():
@@ -117,7 +120,8 @@ def get_logs():
 
 @app.route('/info', methods=['GET'])
 def info():
-    return "Nothing here."
+    im = os.path.join(app.config['UPLOAD_FOLDER'], 'Screenshot 2021-05-21 025441.png')
+    return render_template("info.html",im = im)
 
 
 

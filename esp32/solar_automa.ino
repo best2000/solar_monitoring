@@ -37,6 +37,8 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
   }
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
   server.begin();
   
   WOL.setRepeat(3, 100);
