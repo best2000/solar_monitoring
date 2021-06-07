@@ -120,9 +120,15 @@ def get_logs():
 
 @app.route('/info', methods=['GET'])
 def info():
-    im = os.path.join(app.config['UPLOAD_FOLDER'], 'Screenshot 2021-05-21 025441.png')
-    return render_template("info.html",im = im)
-
+    im = os.path.join(app.config['UPLOAD_FOLDER'], '190193463_185863083443360_6031042187570792335_n.jpg')
+    im2 = os.path.join(app.config['UPLOAD_FOLDER'], '190591652_131566325640132_3981017436805099639_n.jpg')
+    im3 = os.path.join(app.config['UPLOAD_FOLDER'], '190658933_333077144855247_737699591907039461_n.jpg')
+    im4 = os.path.join(app.config['UPLOAD_FOLDER'], '193323532_1186615521817270_6973439960209070890_n.jpg')
+    im5 = os.path.join(app.config['UPLOAD_FOLDER'], '192446184_548249336517209_1545093652385918260_n.jpg')
+    im6 = os.path.join(app.config['UPLOAD_FOLDER'], '194845412_176514641145888_8843008020085624582_n.jpg')
+    im7 = os.path.join(app.config['UPLOAD_FOLDER'], '193376441_4111715182237869_757037507244538712_n.jpg')
+    
+    return render_template("info.html",im = im,im2 = im2,im3 = im3,im4 = im4,im5 = im5,im6 = im6,im7=im7)
 
 
 if __name__ == "__main__":

@@ -36,7 +36,8 @@
     <div class="level">
         <h2 class="subtitle level-item has-text-centered">
             <strong>Welcome</strong>&nbsp;to the <button id="light" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item" onclick="dark_mode()"><b>LIGHT</b></button>
-                                                <button id="dark" style="display: none;" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item" onclick="light_mode()"><b>DARK</b></button> side.</h2>
+                                                <button id="dark" style="display: none;" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item" onclick="light_mode()"><b>DARK</b></button> side.
+                                                &nbsp;<a href="/info" class="button is-focused is-small mt-10 has-text-centered is-vcentered mx-1 level-item"><b>MORE INFO</b></a></h2>
     </div>
 
     <section class="section">
@@ -46,12 +47,12 @@
         <div class="columns">
             <div class="column is-one-fifth">
                 <table class="table is-hoverable">
-                    <tr><td><b>PV Voltage</b></td><td id="v_pv">??</td></tr>
-                    <tr><td><b>PV Current</b></td><td id="i_pv">??</td></tr>
-                    <tr><td><b>PV Power</b></td><td id="p_pv">??</td></tr>
-                    <tr><td><b>Battery Voltage</b></td><td id="v_bat">??</td></tr>
-                    <tr><td><b>Load Current</b></td><td id="i_load">??</td></tr>
-                    <tr><td><b>Load Power</b></td><td id="p_load">??</td></tr>
+                    <tr><td><b>PV Voltage</b></td><td id="v_pv" style="text-align: center;">??</td><td style="text-align: center;"><b>V</b></td></tr>
+                    <tr><td><b>PV Current</b></td><td id="i_pv" style="text-align: center;">??</td><td style="text-align: center;"><b>A</b></td></tr>
+                    <tr><td><b>PV Power</b></td><td id="p_pv" style="text-align: center;">??</td><td style="text-align: center;"><b>W</b></td></tr>
+                    <tr><td><b>Battery Voltage</b></td><td id="v_bat" style="text-align: center;">??</td><td style="text-align: center;"><b>V</b></td></tr>
+                    <tr><td><b>Load Current</b></td><td id="i_load" style="text-align: center;">??</td><td style="text-align: center;"><b>A</b></td></tr>
+                    <tr><td><b>Load Power</b></td><td id="p_load" style="text-align: center;">??</td><td style="text-align: center;"><b>W</b></td></tr>
                 </table>
                 <div class="block">
                     All the data is based on my <a href="/info">SolarPowerSystem</a>.
@@ -151,15 +152,15 @@
                     date = stats.date
                     time = stats.time
                     document.getElementById('s1t1').innerHTML = '@' +date+' '+time
-                    document.getElementById('v_pv').innerHTML = stats['v_pv'] + " V"
-                    document.getElementById('i_pv').innerHTML = stats['i_pv'] + " A"
-                    document.getElementById('v_bat').innerHTML = stats['v_bat'] + " V"
-                    document.getElementById('i_load').innerHTML = stats['i_load'] + " A"
+                    document.getElementById('v_pv').innerHTML = "<b>"+stats['v_pv']+"</b>"
+                    document.getElementById('i_pv').innerHTML = "<b>"+stats['i_pv']+"</b>"
+                    document.getElementById('v_bat').innerHTML = "<b>"+stats['v_bat']+"</b>"
+                    document.getElementById('i_load').innerHTML = "<b>"+stats['i_load']+"</b>"
 
                     var p_pv = (Math.floor(parseFloat(stats['v_pv'])*parseFloat(stats['i_pv']))).toString()
-                    document.getElementById('p_pv').innerHTML = p_pv + " W"
+                    document.getElementById('p_pv').innerHTML = "<b>"+p_pv+"</b>"
                     var p_load = (Math.floor(parseFloat(stats['v_bat'])*parseFloat(stats['i_load']))).toString()
-                    document.getElementById('p_load').innerHTML = p_load + " W"
+                    document.getElementById('p_load').innerHTML = "<b>"+p_load+"</b>"
 
                     addLabel(livePlot, time.slice(3, 8))
                     addData(livePlot, 0, parseFloat(stats['v_pv']))
