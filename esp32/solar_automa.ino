@@ -4,9 +4,9 @@
 #define LED_BUILTIN 2
 
 int ina226 = 0x40;
+int ina226_2 = 0x45;
 int ina219_1 = 0x41;
 int ina219_2 = 0x44;
-int ina219_3 = 0x45;
 int reg_conf = 0x00;
 int reg_vbus = 0x02;
 

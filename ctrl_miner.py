@@ -5,7 +5,7 @@ from wakeonlan import send_magic_packet
 
 mac = "2C:F0:5D:5A:34:AC"
 
-logging.basicConfig(filename='stats/log_ctrl_miner', level=logging.DEBUG, format="%(asctime)s | %(message)s", datefmt="%d-%m-%Y %H:%M:%S")
+logging.basicConfig(filename='stats/log_ctrl_miner.txt', level=logging.DEBUG, format="%(asctime)s | %(message)s", datefmt="%d-%m-%Y %H:%M:%S")
 
 def read_stat(s):
     f = open("stats/"+s, "r")

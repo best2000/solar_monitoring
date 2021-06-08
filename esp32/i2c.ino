@@ -4,6 +4,11 @@ void ina226_setup() {
   Wire.write(0b01001001);
   Wire.write(0b11100110);       
   Wire.endTransmission();
+  Wire.beginTransmission(ina226_2);
+  Wire.write(reg_conf);
+  Wire.write(0b01001001);
+  Wire.write(0b11100110);       
+  Wire.endTransmission();
 }
 
 void ina219_setup() {
@@ -13,11 +18,6 @@ void ina219_setup() {
   Wire.write(0b10011110);       
   Wire.endTransmission();
   Wire.beginTransmission(ina219_2);
-  Wire.write(reg_conf);
-  Wire.write(0b00111111);
-  Wire.write(0b10011110);       
-  Wire.endTransmission();
-  Wire.beginTransmission(ina219_3);
   Wire.write(reg_conf);
   Wire.write(0b00111111);
   Wire.write(0b10011110);       
@@ -71,7 +71,7 @@ float readv_ina219_2() {
   int bits = ((msb << 5) | (lsb >> 3));
   float v = bits*0.004;
   v_raw = v;
-  v -= 2.275;
+  v -= 2.26;
   float i = abs(v/0.066);
   if (i < 0.75) {
     return 0;   
@@ -80,20 +80,22 @@ float readv_ina219_2() {
   }
 }
 
+float v_raw2;
 //i_load 
-float readv_ina219_3() {
-  Wire.beginTransmission(ina219_3);
+float readv_ina226_2() {
+  Wire.beginTransmission(ina226_2);
   Wire.write(reg_vbus);                           
-  Wire.requestFrom(ina219_3, 2); 
+  Wire.requestFrom(ina226_2, 2); 
   byte msb = Wire.read();    
   byte lsb = Wire.read();          
   Wire.endTransmission(); 
   
-  int bits = ((msb << 5) | (lsb >> 3));
-  float v = bits*0.004;
-  v -= 2.275;
-  float i = abs(v/0.04);      
-  if (i < 1 || i >= 125.0) {
+  int bits = ((msb << 8) | lsb);
+  float v = bits*0.00125; 
+  v_raw2 = v;        
+  v -= 2.24;
+  float i = abs(v/0.04);
+  if (i < 0.75) {
     return 0;   
   } else {
     return abs(i); 
@@ -101,5 +103,5 @@ float readv_ina219_3() {
 }
 
 String readv_JSON() {
-  return "{\"v_pv\":" + String(readv_ina219_1(), 2) + ",\"i_pv\":"+ String(readv_ina219_2(), 2) + ",\"v_bat\":" + String(readv_ina226(), 2) + ",\"i_load\":"+ String(readv_ina219_3(), 2) + ",\"i_pv_vraw\":"+ String(v_raw, 2)+"}";
+  return "{\"v_pv\":" + String(readv_ina219_1(), 2) + ",\"i_pv\":"+ String(readv_ina219_2(), 2) + ",\"v_bat\":" + String(readv_ina226(), 2) + ",\"i_load\":"+ String(readv_ina226_2(), 2) + ",\"i_pv_vraw\":"+ String(v_raw, 2)+ ",\"i_load_vraw\":"+ String(v_raw2, 2)+"}";
 }

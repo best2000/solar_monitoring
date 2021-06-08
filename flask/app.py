@@ -12,7 +12,7 @@ def read_log(l):
     y = []
     
     #f = open("/home/pi/solar_automa/stats/log", "r")
-    f = open("C:/repo/solar_automa/stats/log", "r")
+    f = open("C:/repo/solar_automa/stats/log.txt", "r")
     lines = f.read().splitlines()
     f.close()
         

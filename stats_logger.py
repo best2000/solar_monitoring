@@ -1,6 +1,6 @@
 import logging, time, requests
 
-logging.basicConfig(filename='stats/log', level=logging.INFO, format="%(asctime)s | %(message)s", datefmt="%d-%m-%Y %H:%M:%S")
+logging.basicConfig(filename='stats/log.txt', level=logging.INFO, format="%(asctime)s | %(message)s", datefmt="%d-%m-%Y %H:%M:%S")
 logging.getLogger("requests").setLevel(logging.DEBUG)
 
 def write_stat(data, file):
