@@ -3,16 +3,16 @@ from datetime import datetime
 import os
 
 def read_stat(s):
-    #f = open("/home/pi/solar_automa/stats/"+s, "r")
-    f = open("C:/repo/solar_automa/stats/"+s, "r")
+    f = open("/home/pi/solar_monitoring/stats/"+s, "r")
+    #f = open("C:/repo/solar_automa/stats/"+s, "r")
     return f.read()
 
 def read_log(l):
     x = []
     y = []
     
-    #f = open("/home/pi/solar_automa/stats/log", "r")
-    f = open("C:/repo/solar_automa/stats/log.txt", "r")
+    f = open("/home/pi/solar_monitoring/stats/log.txt", "r")
+    #f = open("C:/repo/solar_automa/stats/log.txt", "r")
     lines = f.read().splitlines()
     f.close()
         
